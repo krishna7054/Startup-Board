@@ -4,7 +4,7 @@
 
 Start-Up Board is a web application designed to connect startup founders with potential investors. Founders can create and manage their startup profiles, while investors can browse and interact with these profiles. The application is built using Node.js, MongoDB for the backend, and React with Tailwind CSS for the frontend.
 
-## Live (`https://startup-board.netlify.app`)
+## Live (https://startup-board.netlify.app)
 
 ## Features
 - User Authentication: Register, login, and logout functionality with JWT-based authentication.
