@@ -32,9 +32,13 @@ const RegisterPage = () => {
     if (formData.profilePicture) {
       data.append('profilePicture', formData.profilePicture);
     }
+    if (formData.password.length < 7) {
+      alert('Password must be at least 7 characters');
+      return; // Prevent form submission
+    }
 
     try {
-      const response = await axios.post(`http://localhost:5000/users/register`, data);
+      const response = await axios.post(`https://st-backend-2.onrender.com/users/register`, data);
       console.log('User registered:', response.data);
       nevigate('/login');
 
@@ -52,11 +56,11 @@ const RegisterPage = () => {
   };
 
   return (
-    <div class="min-h-screen flex items-center justify-center bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
-    <div class="relative">
-      <div class="absolute -top-2 -left-2 -right-2 -bottom-2 rounded-lg bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 shadow-lg animate-pulse"></div>
-      <div id="form-container" class="bg-white p-2 sm:p-4 md:p-4 rounded-lg shadow-2xl w-72 sm:w-72 md:w-72 lg:w-80 xl:w-80 relative z-10 transform transition duration-500 ease-in-out">
-        <h2 id="form-title" class="text-center text-3xl font-bold mb-10 text-gray-800">Register</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
+    <div className="relative">
+      <div className="absolute -top-2 -left-2 -right-2 -bottom-2 rounded-lg bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 shadow-lg animate-pulse"></div>
+      <div id="form-container" className="bg-white p-2 sm:p-4 md:p-4 rounded-lg shadow-2xl w-72 sm:w-72 md:w-72 lg:w-80 xl:w-80 relative z-10 transform transition duration-500 ease-in-out">
+        <h2 id="form-title" className="text-center text-3xl font-bold mb-10 text-gray-800">Register</h2>
     <form onSubmit={handleSubmit}  className='space-y-5'>
       <input
         type="text"
