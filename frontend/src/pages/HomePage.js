@@ -17,6 +17,7 @@ const HomePage = () => {
           <p className="text-center lg:text-center text-md md:text-lg mt-1 font-mono">Please log in to access more features.</p>
         </div>
         <div className='-mt-20 lg:mt-0'>
+          
           <MyIcon className="w-full max-w-lg mx-auto lg:mx-0" />
         </div>
       </div>

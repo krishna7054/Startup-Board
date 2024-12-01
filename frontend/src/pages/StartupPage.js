@@ -1,24 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { getStartups, addStartup, updateStartup, deleteStartup } from '../services/startupService';
+import { getUserFromToken } from '../services/authService';
 
 const StartupPage = () => {
   const [startups, setStartups] = useState([]);
   const [form, setForm] = useState({ name: '', description: '', website: '', foundingDate: '', email: '' });
   const [editing, setEditing] = useState(null);
   const [error, setError] = useState(null);
+  const [show, setShow]= useState(false);
+  const currentUser = getUserFromToken();
 
   useEffect(() => {
     const fetchStartups = async () => {
       try {
         const startupsList = await getStartups();
-        setStartups(startupsList);
+        // Filter startups for the current user
+        const userStartups = startupsList.filter(
+          (startup) => startup.founder === currentUser?._id
+        );
+        setStartups(userStartups);
       } catch (error) {
         setError('Failed to fetch startups');
         console.error('Failed to fetch startups:', error);
       }
     };
     fetchStartups();
-  }, []);
+  }, [currentUser]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -135,20 +142,22 @@ const StartupPage = () => {
                 <p><span className="font-semibold">Founding Date:</span> {new Date(startup.foundingDate).toLocaleDateString()}</p>
                 <p><span className="font-semibold">Email:</span> {startup.email}</p>
               </div>
-              <div className="flex justify-end gap-3">
-                <button
-                  onClick={() => handleEdit(startup)}
-                  className="p-3  cursor-pointer text-white font-bold shadow-md hover:scale-105 shadow-yellow-50 rounded px-5 py-2 bg-gradient-to-bl from-yellow-500 to-yellow-500"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleDelete(startup._id)}
-                  className="p-3 cursor-pointer text-white font-bold shadow-md hover:scale-105 shadow-red-500 rounded px-5 py-2 bg-gradient-to-bl from-red-500 to-red-500"
-                >
-                  Delete
-                </button>
-              </div>
+              {currentUser && currentUser._id === startup.founder && (
+                <div className="flex justify-end gap-3">
+                  <button
+                    onClick={() => handleEdit(startup)}
+                    className="p-3 cursor-pointer text-white font-bold shadow-md hover:scale-105 shadow-yellow-50 rounded px-5 py-2 bg-gradient-to-bl from-yellow-500 to-yellow-500"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(startup._id)}
+                    className="p-3 cursor-pointer text-white font-bold shadow-md hover:scale-105 shadow-red-500 rounded px-5 py-2 bg-gradient-to-bl from-red-500 to-red-500"
+                  >
+                    Delete
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         ))}

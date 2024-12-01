@@ -2,7 +2,7 @@
 
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/blogs'; // Replace with your backend URL
+const API_URL = 'https://st-backend-2.onrender.com/blogs'; // Replace with your backend URL
 
 // Helper function to get authorization token from localStorage or wherever you store it
 const getAuthToken = () => {

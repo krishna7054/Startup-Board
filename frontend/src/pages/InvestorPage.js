@@ -1,6 +1,8 @@
 // InvestorPage.js
 import React, { useState, useEffect } from 'react';
 import { getInvestors, addInvestor, updateInvestor, deleteInvestor } from '../services/investorService';
+import { getUserFromToken } from '../services/authService';
+
 
 const InvestorPage = () => {
   const [investors, setInvestors] = useState([]);
@@ -14,15 +16,30 @@ const InvestorPage = () => {
   });
   const [editMode, setEditMode] = useState(false);
   const [editId, setEditId] = useState(null);
+  const [error, setError] = useState('');
+  const currentUser = getUserFromToken();
+
+  const fetchInvestors = async () => {
+    try {
+      const investorsList = await getInvestors();
+      // Filter investors for the current user
+      const userInvestors = investorsList.filter(
+        (investor) => investor.investor === currentUser?._id
+      );
+      setInvestors(userInvestors);
+    } catch (error) {
+      console.error('Failed to fetch investors:', error);
+      setError('Failed to fetch investors');
+    }
+  };
 
   useEffect(() => {
     fetchInvestors();
-  }, []);
+  }, [currentUser]);
 
-  const fetchInvestors = async () => {
-    const investorsList = await getInvestors();
-    setInvestors(investorsList);
-  };
+
+ 
+  
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -157,6 +174,7 @@ const InvestorPage = () => {
             <p><span className="font-semibold">Investment Amount:</span> {investor.investmentAmount}</p>
             <p><span className="font-semibold">Email:</span>{investor.email}</p>
             </div>
+            {currentUser && currentUser._id === investor.investor && (
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => handleEdit(investor)}
@@ -171,6 +189,7 @@ const InvestorPage = () => {
                 Delete
               </button>
             </div>
+            )}
           </div>
           </div>
         ))}

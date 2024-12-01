@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const apiUrl = 'http://localhost:5000/startups/startups';
+const apiUrl = 'https://st-backend-2.onrender.com/startups/startups';
 
 export const getStartups = async () => {
   const response = await axios.get(apiUrl, {

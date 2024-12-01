@@ -1,7 +1,7 @@
 // authService.js
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/users';
+const API_URL = 'https://st-backend-2.onrender.com/users';
 
 export const login = async (email, password) => {
   const response = await axios.post(`${API_URL}/login`, { email, password });
@@ -17,11 +17,20 @@ export const register = async (userData) => {
   return response.data;
 };
 
-export const getUserFromToken = (token) => {
-  
-  const payload = JSON.parse(atob(token.split('.')[1]));
-  
-  return payload;
+export const getUserFromToken = () => {
+  const token = localStorage.getItem('token'); // Replace with your storage mechanism
+  if (!token) {
+    console.error('Token not found');
+    return null;
+  }
+
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload; // Return the decoded payload
+  } catch (error) {
+    console.error('Invalid token format', error);
+    return null;
+  }
 };
 
 export const setUserToken = (token) => {

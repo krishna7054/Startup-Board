@@ -44,7 +44,7 @@ const AllBlogsPage = () => {
               <div className="uppercase tracking-wide text-xl text-indigo-700 font-semibold">
                 {blog.title}
               </div>
-              <p className="block mt-1 text-lg leading-tight font-medium text-white">Author: {blog.author.name}</p>
+              <p className="block mt-1 text-lg leading-tight font-medium text-white">Author: {blog.author?.name || 'Unknown'} </p>
               <p className="mt-2 text-lg font-medium text-gray-800">{blog.content}</p>
               <p className="text-sm">Created At: {new Date(blog.createdAt).toLocaleDateString()}</p>
             </div>

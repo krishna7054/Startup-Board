@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/investors';
+const API_URL = 'https://st-backend-2.onrender.com/investors';
 
 const getToken = () => {
   return localStorage.getItem('token');

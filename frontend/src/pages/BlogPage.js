@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { getBlogs, addBlog, updateBlog, deleteBlog } from '../services/blogService';
+import { getUserFromToken } from '../services/authService';
 
 const BlogPage = () => {
   const [blogs, setBlogs] = useState([]);
@@ -11,14 +12,22 @@ const BlogPage = () => {
   });
   const [editMode, setEditMode] = useState(false);
   const [editId, setEditId] = useState(null);
+  const currentUser = getUserFromToken();
 
   useEffect(() => {
     fetchBlogs();
-  }, []);
+  }, [currentUser]);
 
   const fetchBlogs = async () => {
-    const blogsList = await getBlogs();
-    setBlogs(blogsList);
+    try{
+      const blogsList = await getBlogs();
+      const userBlogs=blogsList.filter(
+        (blog) => blog.author?._id === currentUser?._id
+      );
+      setBlogs(userBlogs);
+    }catch(error){
+      console.log(error);
+    }
   };
 
   const handleInputChange = (e) => {
@@ -118,6 +127,7 @@ const BlogPage = () => {
             <h2 className="text-2xl"><span className='font-semibold'>Title:</span> {blog.title}</h2>
             <p><span className='font-semibold'>Content</span> {blog.content}</p>
             </div>
+            {(currentUser && currentUser._id===blog.author?._id &&
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => handleEdit(blog)}
@@ -125,6 +135,7 @@ const BlogPage = () => {
               >
                 Edit
               </button>
+           
               <button
                 onClick={() => handleDelete(blog._id)}
                 className="p-3 cursor-pointer text-white font-bold shadow-md hover:scale-105 shadow-red-500 rounded px-5 py-2 bg-gradient-to-bl from-red-500 to-red-500"
@@ -132,6 +143,7 @@ const BlogPage = () => {
                 Delete
               </button>
             </div>
+             )}
           </div>
          </div>
         ))}

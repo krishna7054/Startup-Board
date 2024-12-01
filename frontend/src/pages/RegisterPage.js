@@ -1,7 +1,8 @@
-// register.js
-import React,{ useState } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify'; // Import toastify components
+import 'react-toastify/dist/ReactToastify.css'; // Import the styles for react-toastify
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -12,7 +13,8 @@ const RegisterPage = () => {
     profilePicture: null,
   });
 
-  const nevigate= useNavigate();
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -32,15 +34,22 @@ const RegisterPage = () => {
     if (formData.profilePicture) {
       data.append('profilePicture', formData.profilePicture);
     }
+    
     if (formData.password.length < 7) {
-      alert('Password must be at least 7 characters');
+      toast.warning('Password must be at least 7 characters');
       return; // Prevent form submission
     }
 
+    setIsLoading(true);
+
     try {
-      const response = await axios.post(`https://st-backend-2.onrender.com/users/register`, data);
+      const response = await axios.post(
+        `https://st-backend-2.onrender.com/users/register`,
+        data
+      );
       console.log('User registered:', response.data);
-      nevigate('/login');
+      toast.success('Registration successful! Redirecting to login...');
+      navigate('/login');
 
       // Assuming server sends back a JWT token in response.data.token
       const token = response.data.token;
@@ -48,54 +57,62 @@ const RegisterPage = () => {
       // Store the token in local storage
       localStorage.setItem('token', token);
 
-      // Optionally, you may redirect to another page or perform other actions after successful registration
-      // Example: history.push('/dashboard');
     } catch (error) {
       console.error('Error registering user:', error);
+      toast.error('Error registering user. Please try again.'); // Show error toast
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
-    <div className="relative">
-      <div className="absolute -top-2 -left-2 -right-2 -bottom-2 rounded-lg bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 shadow-lg animate-pulse"></div>
-      <div id="form-container" className="bg-white p-2 sm:p-4 md:p-4 rounded-lg shadow-2xl w-72 sm:w-72 md:w-72 lg:w-80 xl:w-80 relative z-10 transform transition duration-500 ease-in-out">
-        <h2 id="form-title" className="text-center text-3xl font-bold mb-10 text-gray-800">Register</h2>
-    <form onSubmit={handleSubmit}  className='space-y-5'>
-      <input
-        type="text"
-        name="name"
-        placeholder="Name"
-        value={formData.name}
-        onChange={handleChange}
-        className='w-full h-12 border border-gray-800 px-3 rounded-lg'
-      />
-      <input
-        type="email"
-        name="email"
-        placeholder="Email"
-        value={formData.email}
-        onChange={handleChange}
-        className='w-full h-12 border border-gray-800 px-3 rounded-lg'
-      />
-      <input
-        type="password"
-        name="password"
-        placeholder="Password"
-        value={formData.password}
-        onChange={handleChange}
-        className='w-full h-12 border border-gray-800 px-3 rounded-lg'
-      />
-      <select name="profession" value={formData.profession} onChange={handleChange} className='w-full h-12 border border-gray-800 px-3 rounded-lg'>
-        <option value="founder">Founder</option>
-        <option value="investor">Investor</option>
-      </select>
-      <input type="file" name="profilePicture" onChange={handleFileChange}  />
-      <button type="submit" className='w-full h-12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'>Register</button>
-    </form>
+    <div className="min-h-screen flex items-center justify-center ">
+      <div className="relative">
+        <div className="absolute -top-2 -left-2 -right-2 -bottom-2 rounded-lg bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 shadow-lg animate-pulse"></div>
+        <div id="form-container" className="bg-white p-2 sm:p-4 md:p-4 rounded-lg shadow-2xl w-72 sm:w-72 md:w-72 lg:w-80 xl:w-80 relative z-10 transform transition duration-500 ease-in-out">
+          <h2 id="form-title" className="text-center text-3xl font-bold mb-10 text-gray-800">Register</h2>
+          <form onSubmit={handleSubmit} className='space-y-5'>
+            <input
+              type="text"
+              name="name"
+              placeholder="Name"
+              value={formData.name}
+              onChange={handleChange}
+              className='w-full h-12 border border-gray-800 px-3 rounded-lg'
+            />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleChange}
+              className='w-full h-12 border border-gray-800 px-3 rounded-lg'
+            />
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              className='w-full h-12 border border-gray-800 px-3 rounded-lg'
+            />
+            <select name="profession" value={formData.profession} onChange={handleChange} className='w-full h-12 border border-gray-800 px-3 rounded-lg'>
+              <option value="founder">Founder</option>
+              <option value="investor">Investor</option>
+            </select>
+            <div>
+              <span className='font-semibold'>Profile Picture</span>
+              <input type="file" name="profilePicture" onChange={handleFileChange} />
+            </div>
+            <button disabled={isLoading} type="submit" className='w-full h-12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'>
+              {isLoading ? 'Registering...' : 'Register'}
+            </button>
+          </form>
+        </div>
+      </div>
+
+      {/* Toast container for displaying toasts */}
+      <ToastContainer />
     </div>
-  </div>
-</div>
   );
 };
 
