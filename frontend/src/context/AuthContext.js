@@ -6,7 +6,7 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [userId, setUserId] = useState(null);
+  // const [userId, setUserId] = useState(null);
   
 
   useEffect(() => {
