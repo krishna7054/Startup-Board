@@ -19,28 +19,24 @@ const InvestorPage = () => {
   // const [error, setError] = useState('');
   const currentUser = getUserFromToken();
 
-  
+ 
 
   useEffect(() => {
     const fetchInvestors = async () => {
-    try {
-      const investorsList = await getInvestors();
-      // Filter investors for the current user
-      const userInvestors = investorsList.filter(
-        (investor) => investor.investor === currentUser?._id
-      );
-      setInvestors(userInvestors);
-    } catch (error) {
-      console.error('Failed to fetch investors:', error);
-      setError('Failed to fetch investors');
-    }
-  };
+      try {
+        const investorsList = await getInvestors();
+        // Filter investors for the current user
+        const userInvestors = investorsList.filter(
+          (investor) => investor.investor === currentUser?._id
+        );
+        setInvestors(userInvestors);
+      } catch (err) {
+        // setError('Failed to fetch investors');
+        console.error('Failed to fetch investors:', err);
+      }
+    };
     fetchInvestors();
   }, [currentUser]);
-
-
- 
-  
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -48,27 +44,51 @@ const InvestorPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (editMode) {
-      await updateInvestor(editId, formData);
-    } else {
-      await addInvestor(formData);
+    try {
+      if (editMode) {
+        await updateInvestor(editId, formData);
+      } else {
+        await addInvestor(formData);
+      }
+      // Refresh investors after adding/updating
+      setInvestors((prev) =>
+        editMode
+          ? prev.map((investor) =>
+              investor._id === editId ? { ...investor, ...formData } : investor
+            )
+          : [...prev, formData]
+      );
+      setFormData({ name: '', description: '', investmentFields: '', investmentAmount: '', email: '' });
+      setEditMode(false);
+      setEditId(null);
+    } catch (err) {
+      // setError('Failed to save investor');
+      console.error('Failed to save investor:', err);
     }
-    fetchInvestors();
-    setFormData({ name: '', description: '', investmentFields:'', investmentAmount:'', email:'' });
-    setEditMode(false);
-    setEditId(null);
   };
 
   const handleEdit = (investor) => {
-    setFormData({ name: investor.name, description: investor.description, investmentFields:investor.investmentFields, investmentAmount: investor.investmentAmount, email: investor.email});
+    setFormData({
+      name: investor.name,
+      description: investor.description,
+      investmentFields: investor.investmentFields,
+      investmentAmount: investor.investmentAmount,
+      email: investor.email,
+    });
     setEditMode(true);
     setEditId(investor._id);
   };
 
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this investor?')) {
-      await deleteInvestor(id);
-      fetchInvestors();
+      try {
+        await deleteInvestor(id);
+        // Refresh investors after deletion
+        setInvestors((prev) => prev.filter((investor) => investor._id !== id));
+      } catch (err) {
+        // setError('Failed to delete investor');
+        console.error('Failed to delete investor:', err);
+      }
     }
   };
 

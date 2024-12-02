@@ -15,21 +15,21 @@ const BlogPage = () => {
   const currentUser = getUserFromToken();
 
   useEffect(() => {
-     const fetchBlogs = async () => {
-    try{
-      const blogsList = await getBlogs();
-      const userBlogs=blogsList.filter(
-        (blog) => blog.author?._id === currentUser?._id
-      );
-      setBlogs(userBlogs);
-    }catch(error){
-      console.log(error);
-    }
-  };
+    const fetchBlogs = async () => {
+      try {
+        const blogsList = await getBlogs();
+        const userBlogs = blogsList.filter(
+          (blog) => blog.author?._id === currentUser?._id
+        );
+        setBlogs(userBlogs);
+      } catch (err) {
+        // setError('Failed to fetch blogs');
+        console.error('Failed to fetch blogs:', err);
+      }
+    };
+
     fetchBlogs();
   }, [currentUser]);
-
- 
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -37,15 +37,24 @@ const BlogPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (editMode) {
-      await updateBlog(editId, formData);
-    } else {
-      await addBlog(formData);
+    try {
+      if (editMode) {
+        await updateBlog(editId, formData);
+      } else {
+        await addBlog(formData);
+      }
+      const blogsList = await getBlogs();
+      const userBlogs = blogsList.filter(
+        (blog) => blog.author?._id === currentUser?._id
+      );
+      setBlogs(userBlogs);
+      setFormData({ title: '', content: '' });
+      setEditMode(false);
+      setEditId(null);
+    } catch (err) {
+      // setError('Failed to save blog');
+      console.error('Failed to save blog:', err);
     }
-    fetchBlogs();
-    setFormData({ title: '', content: '' });
-    setEditMode(false);
-    setEditId(null);
   };
 
   const handleEdit = (blog) => {
@@ -56,8 +65,17 @@ const BlogPage = () => {
 
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this blog post?')) {
-      await deleteBlog(id);
-      fetchBlogs();
+      try {
+        await deleteBlog(id);
+        const blogsList = await getBlogs();
+        const userBlogs = blogsList.filter(
+          (blog) => blog.author?._id === currentUser?._id
+        );
+        setBlogs(userBlogs);
+      } catch (err) {
+        // setError('Failed to delete blog');
+        console.error('Failed to delete blog:', err);
+      }
     }
   };
 
