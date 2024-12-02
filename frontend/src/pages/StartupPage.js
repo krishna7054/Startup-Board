@@ -7,7 +7,7 @@ const StartupPage = () => {
   const [form, setForm] = useState({ name: '', description: '', website: '', foundingDate: '', email: '' });
   const [editing, setEditing] = useState(null);
   const [error, setError] = useState(null);
-  const [show, setShow]= useState(false);
+  // const [show, setShow]= useState(false);
   const currentUser = getUserFromToken();
 
   useEffect(() => {
