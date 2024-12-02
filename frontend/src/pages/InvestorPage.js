@@ -16,10 +16,13 @@ const InvestorPage = () => {
   });
   const [editMode, setEditMode] = useState(false);
   const [editId, setEditId] = useState(null);
-  const [error, setError] = useState('');
+  // const [error, setError] = useState('');
   const currentUser = getUserFromToken();
 
-  const fetchInvestors = async () => {
+  
+
+  useEffect(() => {
+    const fetchInvestors = async () => {
     try {
       const investorsList = await getInvestors();
       // Filter investors for the current user
@@ -32,8 +35,6 @@ const InvestorPage = () => {
       setError('Failed to fetch investors');
     }
   };
-
-  useEffect(() => {
     fetchInvestors();
   }, [currentUser]);
 
