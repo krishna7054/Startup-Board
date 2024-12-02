@@ -15,10 +15,7 @@ const BlogPage = () => {
   const currentUser = getUserFromToken();
 
   useEffect(() => {
-    fetchBlogs();
-  }, [currentUser]);
-
-  const fetchBlogs = async () => {
+     const fetchBlogs = async () => {
     try{
       const blogsList = await getBlogs();
       const userBlogs=blogsList.filter(
@@ -29,6 +26,10 @@ const BlogPage = () => {
       console.log(error);
     }
   };
+    fetchBlogs();
+  }, [currentUser]);
+
+ 
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
