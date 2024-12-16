@@ -14,7 +14,7 @@ const ProfilePage = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/users/me', {
+        const response = await axios.get('https://st-backend-2.onrender.com/users/me', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
