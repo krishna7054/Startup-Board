@@ -54,7 +54,7 @@ const ProfilePage = () => {
     }
 
     try {
-      const response = await axios.patch('http://localhost:5000/users/me', updatedData, {
+      const response = await axios.patch('https://st-backend-2.onrender.com/users/me', updatedData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'multipart/form-data',
